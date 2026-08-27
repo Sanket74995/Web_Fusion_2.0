@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 150 20% 99%;
+    --foreground: 200 18% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 200 18% 11%;
+
+    --primary: 163 76% 26%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 163 52% 95%;
+
+    --secondary: 160 14% 96%;
+    --secondary-foreground: 200 18% 16%;
+
+    --muted: 160 14% 96%;
+    --muted-foreground: 200 8% 42%;
+
+    --accent: 38 92% 48%;
+    --accent-foreground: 30 60% 14%;
+
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-soft: 0 78% 97%;
+
+    --warning: 32 88% 44%;
+    --warning-foreground: 30 60% 14%;
+    --warning-soft: 40 90% 96%;
+
+    --info: 218 78% 48%;
+    --info-soft: 214 90% 97%;
+
+    --border: 160 12% 89%;
+    --input: 160 12% 87%;
+    --ring: 163 76% 32%;
+
+    --ink: 200 24% 9%;
+
+    --radius: 0.75rem;
+
+    /* Chart palette — one system, readable side by side. */
+    --chart-1: #0f7a5c;
+    --chart-2: #2563eb;
+    --chart-3: #d97706;
+    --chart-4: #7c3aed;
+    --chart-5: #0891b2;
+    --chart-6: #be123c;
+    --chart-good: #0f7a5c;
+    --chart-warn: #d97706;
+    --chart-grid: hsl(160 12% 91%);
+    --chart-axis: hsl(200 8% 52%);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-balance;
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Slimmer, quieter scrollbars */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+    border: 3px solid hsl(var(--background));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(200 8% 72%);
+  }
+
+  input[type='date'],
+  input[type='time'] {
+    min-height: 2.5rem;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply rounded-xl border border-border bg-card shadow-sm;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.55) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.55) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .dot-bg {
+    background-image: radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .gpu {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+  .mask-fade-r {
+    mask-image: linear-gradient(to right, black 82%, transparent 100%);
+  }
+}
+
+/* Respect reduced motion everywhere, including Framer Motion fallbacks. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

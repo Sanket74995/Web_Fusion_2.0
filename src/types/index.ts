@@ -63,6 +63,8 @@ export interface User {
   hue: number
   bio?: string
   status: 'active' | 'flagged' | 'suspended'
+  /** Gamified reward currency. Defaults to computed fallback if missing. */
+  coins?: number
 }
 
 export type AvailabilityStatus = 'available' | 'borrowed' | 'unavailable'
@@ -354,6 +356,21 @@ export interface PlatformBaseline {
   platformFees: number
 }
 
+/* ── Wanted Requests ────────────────────────────────────────── */
+
+export interface WantedRequest {
+  id: string
+  requesterId: string
+  title: string
+  category: Category
+  description: string
+  neededByDate: string
+  maxBudgetPerDay: number
+  status: 'open' | 'fulfilled' | 'closed'
+  createdAt: string
+  fulfilledByResourceId?: string
+}
+
 export interface AppState {
   version: number
   currentUserId: string
@@ -366,6 +383,8 @@ export interface AppState {
   ratings: Rating[]
   notifications: Notification[]
   messages: Message[]
+  wishlistResourceIds: string[]
+  wantedRequests: WantedRequest[]
   adminSession: boolean
   platformFeeRate: number
   baseline: PlatformBaseline

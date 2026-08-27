@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   Bell,
   Compass,
+  Heart,
+  HelpCircle,
   LayoutGrid,
   LogOut,
   Menu,
@@ -11,6 +13,7 @@ import {
   RotateCcw,
   Shield,
   Sparkles,
+  Trophy,
   User as UserIcon,
   X,
 } from 'lucide-react'
@@ -28,8 +31,10 @@ import { Logo } from './Logo'
 const LINKS = [
   { to: '/discover', label: 'Discover', icon: Compass },
   { to: '/ai', label: 'AI Find', icon: Sparkles },
-  { to: '/borrowings', label: 'My Borrowings', icon: Package },
-  { to: '/listings', label: 'My Listings', icon: LayoutGrid },
+  { to: '/wanted', label: 'Wanted Board', icon: HelpCircle },
+  { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { to: '/borrowings', label: 'Borrowings', icon: Package },
+  { to: '/listings', label: 'Listings', icon: LayoutGrid },
 ]
 
 export function Navbar() {
@@ -93,6 +98,19 @@ export function Navbar() {
           </nav>
 
           <div className="ml-auto flex items-center gap-1.5">
+            <Link
+              to="/wishlist"
+              className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="My Wishlist"
+            >
+              <Heart className="size-[1.125rem]" />
+              {(state.wishlistResourceIds ?? []).length > 0 && (
+                <span className="num absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary-soft text-primary border border-primary/30 px-1 text-[0.5625rem] font-bold leading-4">
+                  {(state.wishlistResourceIds ?? []).length}
+                </span>
+              )}
+            </Link>
+
             <Link
               to="/messages"
               className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

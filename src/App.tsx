@@ -21,6 +21,9 @@ import { NewListingPage } from '@/pages/NewListing'
 import { ProfilePage } from '@/pages/Profile'
 import { NotificationsPage } from '@/pages/Notifications'
 import { MessagesPage } from '@/pages/Messages'
+import { WantedBoardPage } from '@/pages/WantedBoard'
+import { WishlistPage } from '@/pages/Wishlist'
+import { LeaderboardPage } from '@/pages/Leaderboard'
 import { ImpactPage } from '@/pages/Impact'
 import { NotFoundPage } from '@/pages/NotFound'
 
@@ -42,6 +45,9 @@ export function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/ai" element={<AIFindPage />} />
+        <Route path="/wanted" element={<WantedBoardPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/resource/:id" element={<ResourceDetailsPage />} />
         <Route path="/borrow/:resourceId" element={<BorrowRequestPage />} />
 

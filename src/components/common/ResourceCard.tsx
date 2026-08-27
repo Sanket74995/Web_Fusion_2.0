@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, MapPin, Package } from 'lucide-react'
+import { ArrowUpRight, Heart, MapPin, Package } from 'lucide-react'
 import type { Resource, User } from '@/types'
+import { useStore } from '@/store/AppStore'
 import { availabilityLabel, distanceLabel, inr } from '@/lib/format'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -41,13 +42,14 @@ export function ResourceCard({
               {resource.category}
             </Badge>
           </div>
-          {score !== undefined && (
-            <div className="absolute right-3 top-3">
+          <div className="absolute right-3 top-3 flex items-center gap-1.5">
+            {score !== undefined && (
               <Badge variant="ink" size="sm" className="num shadow-sm">
                 {score}% match
               </Badge>
-            </div>
-          )}
+            )}
+            <HeartButton resourceId={resource.id} />
+          </div>
           {!free && (
             <div className="absolute inset-x-0 bottom-0 bg-ink/70 px-3 py-1.5 text-2xs font-medium text-white backdrop-blur-sm">
               {availabilityLabel(resource.availableFrom)}
@@ -155,5 +157,28 @@ export function ResourceRow({
       )}
       {right && <div className="shrink-0">{right}</div>}
     </div>
+  )
+}
+
+function HeartButton({ resourceId }: { resourceId: string }) {
+  const { toggleWishlist, isWishlisted } = useStore()
+  const active = isWishlisted(resourceId)
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        toggleWishlist(resourceId)
+      }}
+      aria-label={active ? 'Remove from wishlist' : 'Save to wishlist'}
+      className={cn(
+        'inline-flex size-7 items-center justify-center rounded-full bg-card/90 shadow-sm backdrop-blur-sm transition-all duration-200 hover:scale-110',
+        active ? 'text-destructive' : 'text-muted-foreground hover:text-foreground',
+      )}
+    >
+      <Heart className={cn('size-3.5', active && 'fill-destructive text-destructive')} />
+    </button>
   )
 }

@@ -25,6 +25,7 @@ import type {
   Settlement,
   Transaction,
   User,
+  WantedRequest,
 } from '@/types'
 import { LIFECYCLE_ORDER } from '@/types'
 import { createSeedState, loadState, resetState, saveState } from '@/services/storage'
@@ -111,6 +112,23 @@ interface Store {
   /** Send a chat message in a borrowing thread. */
   sendMessage: (borrowingId: string, text: string) => Message
   markMessagesRead: (borrowingId: string) => void
+
+  /** Wishlist / Bookmark actions */
+  toggleWishlist: (resourceId: string) => void
+  isWishlisted: (resourceId: string) => boolean
+
+  /** Wanted Board actions */
+  createWantedRequest: (input: {
+    title: string
+    category: Category
+    description: string
+    neededByDate: string
+    maxBudgetPerDay: number
+  }) => WantedRequest
+  fulfillWantedRequest: (requestId: string, resourceId: string) => void
+
+  /** CampusCoins & Perks */
+  redeemPerk: (perkTitle: string, cost: number) => boolean
 
   pushNotification: (n: { kind: NotificationKind; title: string; body?: string; link?: string }) => void
   markNotificationRead: (id: string) => void
@@ -645,6 +663,99 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
               : m,
           ),
         }))
+      },
+
+      /* ── Wishlist ───────────────────────────────────────── */
+      toggleWishlist(resourceId) {
+        update((s) => {
+          const list = s.wishlistResourceIds ?? []
+          const exists = list.includes(resourceId)
+          const nextList = exists
+            ? list.filter((id) => id !== resourceId)
+            : [...list, resourceId]
+          const resource = s.resources.find((r) => r.id === resourceId)
+          const next = { ...s, wishlistResourceIds: nextList }
+          return exists
+            ? next
+            : notify(next, {
+                kind: 'info',
+                title: 'Saved to Wishlist',
+                body: `${resource?.name ?? 'Resource'} saved to your wishlist.`,
+                link: '/wishlist',
+              })
+        })
+      },
+
+      isWishlisted(resourceId) {
+        return (state.wishlistResourceIds ?? []).includes(resourceId)
+      },
+
+      /* ── Wanted Board ───────────────────────────────────── */
+      createWantedRequest(input) {
+        const req: WantedRequest = {
+          id: uid('w'),
+          requesterId: state.currentUserId,
+          ...input,
+          status: 'open',
+          createdAt: new Date().toISOString(),
+        }
+        update((s) =>
+          notify(
+            { ...s, wantedRequests: [req, ...(s.wantedRequests ?? [])] },
+            {
+              kind: 'info',
+              title: 'Request posted to Wanted Board',
+              body: `Other students can now see your request for ${req.title}.`,
+              link: '/wanted',
+            },
+          ),
+        )
+        return req
+      },
+
+      fulfillWantedRequest(requestId, resourceId) {
+        update((s) => {
+          const req = (s.wantedRequests ?? []).find((w) => w.id === requestId)
+          const resource = s.resources.find((r) => r.id === resourceId)
+          if (!req) return s
+          const next = {
+            ...s,
+            wantedRequests: (s.wantedRequests ?? []).map((w) =>
+              w.id === requestId
+                ? { ...w, status: 'fulfilled' as const, fulfilledByResourceId: resourceId }
+                : w,
+            ),
+          }
+          return notify(next, {
+            kind: 'success',
+            title: 'Offered resource for wanted request',
+            body: `You offered ${resource?.name} for "${req.title}".`,
+            link: `/resource/${resourceId}`,
+          })
+        })
+      },
+
+      /* ── CampusCoins ────────────────────────────────────── */
+      redeemPerk(perkTitle, cost) {
+        const user = stateRef.current.users.find((u) => u.id === stateRef.current.currentUserId)
+        const currentCoins = user?.coins ?? 0
+        if (!user || currentCoins < cost) return false
+
+        update((s) => {
+          const nextUsers = s.users.map((u) =>
+            u.id === s.currentUserId ? { ...u, coins: (u.coins ?? 0) - cost } : u,
+          )
+          return notify(
+            { ...s, users: nextUsers },
+            {
+              kind: 'success',
+              title: `Redeemed: ${perkTitle}`,
+              body: `Used ${cost} CampusCoins. Your new balance is ${currentCoins - cost} coins.`,
+              link: '/leaderboard',
+            },
+          )
+        })
+        return true
       },
 
       /* ── Notifications ──────────────────────────────────── */

@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { Compass, LayoutGrid, Package, Sparkles } from 'lucide-react'
+import { Compass, HelpCircle, LayoutGrid, Package, Sparkles, Trophy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Footer, Navbar } from './Navbar'
 
 const TABS = [
   { to: '/discover', label: 'Discover', icon: Compass },
   { to: '/ai', label: 'AI Find', icon: Sparkles },
+  { to: '/wanted', label: 'Wanted', icon: HelpCircle },
+  { to: '/leaderboard', label: 'Ranks', icon: Trophy },
   { to: '/borrowings', label: 'Borrowings', icon: Package },
   { to: '/listings', label: 'Listings', icon: LayoutGrid },
 ]
@@ -32,7 +34,7 @@ export function StudentLayout() {
         className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur-md md:hidden"
         aria-label="Bottom navigation"
       >
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-6">
           {TABS.map((t) => (
             <NavLink
               key={t.to}

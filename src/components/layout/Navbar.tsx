@@ -25,20 +25,28 @@ import { ConfirmDialog } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/toast'
 import { Avatar } from '@/components/common/Avatar'
 import { AccountSwitcher } from '@/components/common/AccountSwitcher'
+import { NotificationItem } from '@/components/common/NotificationItem'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { Logo } from './Logo'
 
 const LINKS = [
   { to: '/discover', label: 'Discover', icon: Compass },
   { to: '/ai', label: 'AI Find', icon: Sparkles },
-  { to: '/wanted', label: 'Wanted Board', icon: HelpCircle },
+  { to: '/wanted', label: 'Wanted', icon: HelpCircle },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { to: '/borrowings', label: 'Borrowings', icon: Package },
   { to: '/listings', label: 'Listings', icon: LayoutGrid },
 ]
 
 export function Navbar() {
-  const { state, currentUser, resetDemo, setCurrentUser } = useStore()
+  const {
+    state,
+    currentUser,
+    resetDemo,
+    setCurrentUser,
+    markNotificationRead,
+    markAllNotificationsRead,
+  } = useStore()
   const { toast } = useToast()
   const navigate = useNavigate()
   const location = useLocation()
@@ -74,24 +82,24 @@ export function Navbar() {
             : 'border-transparent bg-background',
         )}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 sm:gap-4 px-4 sm:px-6 lg:px-8">
           <Logo />
 
-          <nav className="ml-4 hidden items-center gap-1 md:flex" aria-label="Main">
+          <nav className="ml-2 hidden items-center gap-0.5 lg:gap-1 lg:flex whitespace-nowrap shrink-0" aria-label="Main">
             {LINKS.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 className={({ isActive }) =>
                   cn(
-                    'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-[0.8125rem] font-medium transition-colors duration-150',
+                    'inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-[0.8125rem] font-medium transition-colors duration-150 whitespace-nowrap shrink-0',
                     isActive
                       ? 'bg-primary-soft text-primary'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                   )
                 }
               >
-                <l.icon className="size-4" />
+                <l.icon className="size-4 shrink-0" />
                 {l.label}
               </NavLink>
             ))}
@@ -124,18 +132,68 @@ export function Navbar() {
               )}
             </Link>
 
-            <Link
-              to="/notifications"
-              className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              aria-label={`Notifications${unread ? ` (${unread} unread)` : ''}`}
-            >
-              <Bell className="size-[1.125rem]" />
-              {unread > 0 && (
-                <span className="num absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[0.5625rem] font-bold leading-4 text-destructive-foreground">
-                  {unread > 9 ? '9+' : unread}
-                </span>
-              )}
-            </Link>
+            {/* Notification Icon with Hover Preview Popover */}
+            <div className="relative group">
+              <Link
+                to="/notifications"
+                className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                aria-label={`Notifications${unread ? ` (${unread} unread)` : ''}`}
+              >
+                <Bell className="size-[1.125rem]" />
+                {unread > 0 && (
+                  <span className="num absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[0.5625rem] font-bold leading-4 text-destructive-foreground">
+                    {unread > 9 ? '9+' : unread}
+                  </span>
+                )}
+              </Link>
+
+              {/* Hover Popover Box */}
+              <div className="absolute right-0 top-full pt-2 w-80 sm:w-96 opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                <div className="rounded-xl border border-border bg-card shadow-xl p-3">
+                  <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-border">
+                    <span className="text-xs font-semibold flex items-center gap-1.5">
+                      <Bell className="size-3.5 text-primary" />
+                      Recent Notifications
+                    </span>
+                    {unread > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => markAllNotificationsRead()}
+                        className="text-2xs font-medium text-primary hover:underline"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 max-h-72 overflow-y-auto">
+                    {state.notifications.length === 0 ? (
+                      <p className="text-xs text-muted-foreground text-center py-4">
+                        No notifications yet.
+                      </p>
+                    ) : (
+                      state.notifications.slice(0, 4).map((n) => (
+                        <NotificationItem
+                          key={n.id}
+                          notification={n}
+                          onRead={markNotificationRead}
+                          className="p-2.5 text-xs"
+                        />
+                      ))
+                    )}
+                  </div>
+
+                  <div className="pt-2.5 mt-2.5 border-t border-border text-center">
+                    <Link
+                      to="/notifications"
+                      className="text-2xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
+                    >
+                      View all notifications →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <ThemeToggle />
 

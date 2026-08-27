@@ -19,6 +19,7 @@ import { platformStats } from '@/services/analytics'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { Logo } from './Logo'
 
 export function AdminLayout() {
@@ -106,6 +107,7 @@ export function AdminLayout() {
           </Badge>
 
           <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             <Link
               to="/"
               className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

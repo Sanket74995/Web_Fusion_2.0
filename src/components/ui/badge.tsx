@@ -13,7 +13,7 @@ const badgeVariants = cva(
         danger: 'border-destructive/20 bg-destructive-soft text-destructive',
         info: 'border-info/20 bg-info-soft text-info',
         outline: 'border-border bg-card text-foreground',
-        ink: 'border-transparent bg-ink text-white',
+        ink: 'border-transparent bg-foreground text-background',
       },
       size: {
         sm: 'px-1.5 py-0.5 text-2xs [&_svg]:size-3',

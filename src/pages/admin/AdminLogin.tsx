@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Field, Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/toast'
 import { PageTransition } from '@/components/common/Motion'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { Logo } from '@/components/layout/Logo'
 
 export function AdminLoginPage() {
@@ -54,7 +55,10 @@ export function AdminLoginPage() {
   }
 
   return (
-    <PageTransition className="min-h-screen bg-background">
+    <PageTransition className="relative min-h-screen bg-background">
+      <div className="absolute right-4 top-4 z-10">
+        <ThemeToggle />
+      </div>
       <div className="grid min-h-screen lg:grid-cols-[1fr_1.1fr]">
         {/* Form */}
         <div className="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-14">

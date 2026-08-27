@@ -24,6 +24,7 @@ import { MessagesPage } from '@/pages/Messages'
 import { WantedBoardPage } from '@/pages/WantedBoard'
 import { WishlistPage } from '@/pages/Wishlist'
 import { LeaderboardPage } from '@/pages/Leaderboard'
+import { CampusMapPage } from '@/pages/CampusMap'
 import { ImpactPage } from '@/pages/Impact'
 import { NotFoundPage } from '@/pages/NotFound'
 
@@ -45,6 +46,7 @@ export function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/discover" element={<DiscoverPage />} />
         <Route path="/ai" element={<AIFindPage />} />
+        <Route path="/map" element={<CampusMapPage />} />
         <Route path="/wanted" element={<WantedBoardPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />

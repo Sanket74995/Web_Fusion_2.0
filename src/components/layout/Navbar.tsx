@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Navigation,
   Package,
   RotateCcw,
   Shield,
@@ -32,6 +33,7 @@ import { Logo } from './Logo'
 const LINKS = [
   { to: '/discover', label: 'Discover', icon: Compass },
   { to: '/ai', label: 'AI Find', icon: Sparkles },
+  { to: '/map', label: 'Campus Map', icon: Navigation },
   { to: '/wanted', label: 'Wanted', icon: HelpCircle },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { to: '/borrowings', label: 'Borrowings', icon: Package },

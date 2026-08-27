@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { Compass, HelpCircle, LayoutGrid, Package, Sparkles, Trophy } from 'lucide-react'
+import { Compass, HelpCircle, LayoutGrid, Navigation, Package, Sparkles, Trophy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Footer, Navbar } from './Navbar'
 
 const TABS = [
   { to: '/discover', label: 'Discover', icon: Compass },
   { to: '/ai', label: 'AI Find', icon: Sparkles },
+  { to: '/map', label: 'Map', icon: Navigation },
   { to: '/wanted', label: 'Wanted', icon: HelpCircle },
   { to: '/leaderboard', label: 'Ranks', icon: Trophy },
   { to: '/borrowings', label: 'Borrowings', icon: Package },

@@ -100,6 +100,13 @@ interface Store {
     input: { ownerRating: number; resourceRating: number; exchangeRating: number; review: string },
   ) => void
 
+  /**
+   * Sign in as a different campus member. Every screen derives borrower/owner
+   * roles from `currentUserId`, so switching flips the whole app's perspective —
+   * that is how one browser demonstrates both sides of an exchange.
+   */
+  setCurrentUser: (id: string) => void
+
   pushNotification: (n: { kind: NotificationKind; title: string; body?: string; link?: string }) => void
   markNotificationRead: (id: string) => void
   markAllNotificationsRead: () => void
@@ -700,6 +707,18 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       },
       setPlatformFeeRate(rate) {
         update((s) => ({ ...s, platformFeeRate: rate }))
+      },
+      setCurrentUser(id) {
+        update((s) => {
+          const user = s.users.find((u) => u.id === id)
+          if (!user || user.id === s.currentUserId) return s
+          return notify({ ...s, currentUserId: id }, {
+            kind: 'info',
+            title: `Signed in as ${user.name}`,
+            body: `${user.department} · ${user.year} — you now see this account's requests, listings and exchanges.`,
+            link: '/profile',
+          })
+        })
       },
       resetDemo() {
         resetState()

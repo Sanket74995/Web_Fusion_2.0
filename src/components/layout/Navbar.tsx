@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge'
 import { ConfirmDialog } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/toast'
 import { Avatar } from '@/components/common/Avatar'
+import { AccountSwitcher } from '@/components/common/AccountSwitcher'
 import { Logo } from './Logo'
 
 const LINKS = [
@@ -30,7 +31,7 @@ const LINKS = [
 ]
 
 export function Navbar() {
-  const { state, currentUser, resetDemo } = useStore()
+  const { state, currentUser, resetDemo, setCurrentUser } = useStore()
   const { toast } = useToast()
   const navigate = useNavigate()
   const location = useLocation()
@@ -103,15 +104,9 @@ export function Navbar() {
               List a resource
             </Link>
 
-            <Link
-              to="/profile"
-              className="hidden items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-muted sm:inline-flex"
-            >
-              <Avatar user={currentUser} size="sm" />
-              <span className="hidden text-[0.8125rem] font-medium lg:inline">
-                {currentUser.name.split(' ')[0]}
-              </span>
-            </Link>
+            <div className="hidden sm:block">
+              <AccountSwitcher />
+            </div>
 
             <Button
               variant="ghost"
@@ -151,6 +146,42 @@ export function Navbar() {
                 <UserIcon className="size-4" />
                 Profile
               </NavLink>
+              <div className="border-t border-border pt-3">
+                <p className="px-3 pb-2 text-2xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Signed in as {currentUser.name} — tap to switch
+                </p>
+                <div className="no-scrollbar flex gap-2 overflow-x-auto px-3 pb-2">
+                  {state.users.map((u) => {
+                    const active = u.id === currentUser.id
+                    return (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => {
+                          if (active) return
+                          setCurrentUser(u.id)
+                          toast({
+                            title: `Now signed in as ${u.name.split(' ')[0]}`,
+                            description: 'The app now shows this account’s side of every exchange.',
+                            tone: 'info',
+                          })
+                        }}
+                        className={cn(
+                          'flex w-16 shrink-0 flex-col items-center gap-1 rounded-lg border px-1 py-2 transition-colors',
+                          active ? 'border-primary bg-primary-soft' : 'border-border bg-card',
+                        )}
+                        aria-pressed={active}
+                      >
+                        <Avatar user={u} size="sm" />
+                        <span className="w-full truncate text-center text-2xs font-medium">
+                          {u.name.split(' ')[0]}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-2 border-t border-border pt-3">
                 <Link
                   to="/listings/new"
@@ -212,6 +243,7 @@ export function Navbar() {
 }
 
 export function Footer() {
+  const { currentUser } = useStore()
   return (
     <footer className="mt-16 border-t border-border bg-card">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -298,7 +330,7 @@ export function Footer() {
           </p>
           <p className="inline-flex items-center gap-1.5">
             <LogOut className="size-3" />
-            Signed in as a demo student account
+            Signed in as {currentUser.name} · switch accounts from the avatar menu
           </p>
         </div>
       </div>

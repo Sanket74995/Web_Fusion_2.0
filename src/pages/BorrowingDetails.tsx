@@ -26,6 +26,7 @@ import { Avatar, RatingStars } from '@/components/common/Avatar'
 import { TrustBadge, VerifiedTag } from '@/components/common/Trust'
 import { StatusBadge, DisputeBadge } from '@/components/common/StatusBadge'
 import { LifecycleTimeline } from '@/components/common/LifecycleTimeline'
+import { SwitchToActorCard } from '@/components/common/AccountSwitcher'
 import { ConditionComparison } from '@/components/common/ConditionComparison'
 import { ChargeBreakdown, SettlementBreakdown } from '@/components/common/ChargeBreakdown'
 import { DataRow } from '@/components/common/StatCard'
@@ -129,6 +130,8 @@ export function BorrowingDetailsPage() {
           </Card>
         </Reveal>
       )}
+
+      <SwitchToActorCard borrowing={borrowing} className="mb-6" />
 
       <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <div className="min-w-0 space-y-6">

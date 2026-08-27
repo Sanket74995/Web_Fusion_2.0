@@ -1,5 +1,8 @@
 import type { Borrowing } from '@/types'
 
+/** Which side of the exchange has to act next. `both` = a joint, in-person step. */
+export type LifecycleActor = 'borrower' | 'owner' | 'both' | 'none'
+
 export interface NextAction {
   label: string
   to: string
@@ -7,6 +10,8 @@ export interface NextAction {
   hint: string
   /** Primary = it is this student's turn to act. */
   urgency: 'primary' | 'waiting' | 'done'
+  /** Whose account can actually perform this step. */
+  actor: LifecycleActor
 }
 
 /**
@@ -24,6 +29,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/agreement`,
         hint: 'Waiting for the owner to accept your dates',
         urgency: 'waiting',
+        actor: 'owner',
       }
     case 'accepted':
       return paid
@@ -32,12 +38,14 @@ export function nextAction(b: Borrowing): NextAction {
             to: `${base}/handover`,
             hint: 'Meet the owner and record the condition together',
             urgency: 'primary',
+            actor: 'both',
           }
         : {
             label: 'Pay & confirm',
             to: `${base}/payment`,
             hint: 'Pay the charge and deposit to lock this booking',
             urgency: 'primary',
+            actor: 'borrower',
           }
     case 'handover':
       return {
@@ -45,6 +53,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/handover`,
         hint: 'Record the condition before the resource changes hands',
         urgency: 'primary',
+        actor: 'both',
       }
     case 'borrowed':
       return {
@@ -52,6 +61,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/return`,
         hint: 'Return before the deadline to keep your full deposit',
         urgency: 'waiting',
+        actor: 'borrower',
       }
     case 'return_due':
       return {
@@ -59,6 +69,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/return`,
         hint: 'The deadline has passed — a late fee grows each day',
         urgency: 'primary',
+        actor: 'borrower',
       }
     case 'returned':
       return {
@@ -66,6 +77,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/inspection`,
         hint: 'The owner compares the returned condition with handover',
         urgency: 'primary',
+        actor: 'owner',
       }
     case 'inspection':
       return {
@@ -73,6 +85,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/settlement`,
         hint: 'Deposit − damage − late fee = your refund',
         urgency: 'primary',
+        actor: 'both',
       }
     case 'settlement':
       return {
@@ -80,6 +93,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: `${base}/rating`,
         hint: 'Your rating feeds the trust score that ranks future matches',
         urgency: 'primary',
+        actor: 'borrower',
       }
     case 'rated':
       return {
@@ -87,6 +101,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: base,
         hint: 'Exchange complete — deposit settled and rated',
         urgency: 'done',
+        actor: 'none',
       }
     case 'declined':
       return {
@@ -94,6 +109,7 @@ export function nextAction(b: Borrowing): NextAction {
         to: '/discover',
         hint: 'The owner could not lend it for those dates',
         urgency: 'done',
+        actor: 'none',
       }
     case 'cancelled':
     default:
@@ -102,8 +118,29 @@ export function nextAction(b: Borrowing): NextAction {
         to: base,
         hint: 'This request was cancelled',
         urgency: 'done',
+        actor: 'none',
       }
   }
+}
+
+/**
+ * Can the signed-in account take the next step itself?
+ * When it cannot, the UI offers to switch to the account that can.
+ */
+export function canAct(b: Borrowing, currentUserId: string) {
+  const { actor } = nextAction(b)
+  if (actor === 'none') return true
+  if (actor === 'both') return b.borrowerId === currentUserId || b.ownerId === currentUserId
+  const needed = actor === 'owner' ? b.ownerId : b.borrowerId
+  return needed === currentUserId
+}
+
+/** The account id that has to act next, or undefined when either side can. */
+export function actorUserId(b: Borrowing): string | undefined {
+  const { actor } = nextAction(b)
+  if (actor === 'owner') return b.ownerId
+  if (actor === 'borrower') return b.borrowerId
+  return undefined
 }
 
 /** Active exchanges are the ones still moving through the lifecycle. */

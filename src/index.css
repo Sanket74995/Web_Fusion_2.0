@@ -55,6 +55,47 @@
     --chart-axis: hsl(200 8% 52%);
   }
 
+  .dark {
+    --background: 220 18% 9%;
+    --foreground: 210 14% 93%;
+
+    --card: 220 16% 12%;
+    --card-foreground: 210 14% 93%;
+
+    --primary: 163 60% 38%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 163 40% 16%;
+
+    --secondary: 220 14% 16%;
+    --secondary-foreground: 210 14% 85%;
+
+    --muted: 220 14% 16%;
+    --muted-foreground: 210 10% 52%;
+
+    --accent: 38 85% 52%;
+    --accent-foreground: 30 60% 10%;
+
+    --destructive: 0 65% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-soft: 0 40% 14%;
+
+    --warning: 32 80% 50%;
+    --warning-foreground: 30 60% 10%;
+    --warning-soft: 36 50% 14%;
+
+    --info: 218 72% 58%;
+    --info-soft: 218 40% 14%;
+
+    --border: 220 14% 20%;
+    --input: 220 14% 22%;
+    --ring: 163 60% 42%;
+
+    --ink: 210 20% 96%;
+
+    --chart-grid: hsl(220 14% 22%);
+    --chart-axis: hsl(210 10% 48%);
+  }
+
   * {
     @apply border-border;
   }

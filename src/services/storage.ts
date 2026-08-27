@@ -26,6 +26,7 @@ export function createSeedState(): AppState {
     disputes: history.disputes,
     ratings: history.ratings,
     notifications: buildSeedNotifications(),
+    messages: [],
     adminSession: false,
     platformFeeRate: DEFAULT_PLATFORM_FEE_RATE,
     baseline: computeBaseline(core),
@@ -47,6 +48,8 @@ export function loadState(): AppState {
     const parsed = JSON.parse(raw) as AppState
     if (parsed.version !== STATE_VERSION) return createSeedState()
     if (Date.now() - new Date(parsed.seededAt).getTime() > MAX_STATE_AGE_MS) return createSeedState()
+    // Forward-compatibility: add messages if missing from older stored state
+    if (!parsed.messages) parsed.messages = []
     return parsed
   } catch {
     return createSeedState()

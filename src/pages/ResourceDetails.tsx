@@ -31,6 +31,7 @@ import { AvailabilityBadge } from '@/components/common/StatusBadge'
 import { Avatar, RatingStars } from '@/components/common/Avatar'
 import { TrustBadge, TrustScorePanel, VerifiedTag } from '@/components/common/Trust'
 import { ChargeBreakdown } from '@/components/common/ChargeBreakdown'
+import { AvailabilityCalendar } from '@/components/common/AvailabilityCalendar'
 import { ResourceCard } from '@/components/common/ResourceCard'
 import { EmptyState } from '@/components/common/EmptyState'
 import { NotFoundPage } from './NotFound'
@@ -276,32 +277,44 @@ export function ResourceDetailsPage() {
                   </span>
                 </div>
 
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <Field label="From">
-                    {(fid) => (
-                      <Input
-                        id={fid}
-                        type="date"
-                        value={start}
-                        min={toDateInput(new Date())}
-                        onChange={(e) => {
-                          setStart(e.target.value)
-                          if (e.target.value > end) setEnd(e.target.value)
-                        }}
-                      />
-                    )}
-                  </Field>
-                  <Field label="Until">
-                    {(fid) => (
-                      <Input
-                        id={fid}
-                        type="date"
-                        value={end}
-                        min={start}
-                        onChange={(e) => setEnd(e.target.value)}
-                      />
-                    )}
-                  </Field>
+                <div className="mt-5 space-y-3">
+                  <AvailabilityCalendar
+                    resourceId={resource.id}
+                    startDate={start}
+                    endDate={end}
+                    onSelectRange={(s, e) => {
+                      setStart(s)
+                      setEnd(e)
+                    }}
+                  />
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="From">
+                      {(fid) => (
+                        <Input
+                          id={fid}
+                          type="date"
+                          value={start}
+                          min={toDateInput(new Date())}
+                          onChange={(e) => {
+                            setStart(e.target.value)
+                            if (e.target.value > end) setEnd(e.target.value)
+                          }}
+                        />
+                      )}
+                    </Field>
+                    <Field label="Until">
+                      {(fid) => (
+                        <Input
+                          id={fid}
+                          type="date"
+                          value={end}
+                          min={start}
+                          onChange={(e) => setEnd(e.target.value)}
+                        />
+                      )}
+                    </Field>
+                  </div>
                 </div>
 
                 {charges && (

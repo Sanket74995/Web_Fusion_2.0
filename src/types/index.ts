@@ -257,6 +257,17 @@ export interface Notification {
   link?: string
 }
 
+/* ── Messaging ──────────────────────────────────────────────── */
+
+export interface Message {
+  id: string
+  borrowingId: string
+  fromUserId: string
+  text: string
+  sentAt: string
+  read: boolean
+}
+
 /* ── AI layer ───────────────────────────────────────────────── */
 
 export interface ParsedNeed {
@@ -354,6 +365,7 @@ export interface AppState {
   disputes: Dispute[]
   ratings: Rating[]
   notifications: Notification[]
+  messages: Message[]
   adminSession: boolean
   platformFeeRate: number
   baseline: PlatformBaseline

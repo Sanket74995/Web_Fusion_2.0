@@ -17,6 +17,7 @@ import type {
   ConditionReport,
   Dispute,
   LifecycleStatus,
+  Message,
   Notification,
   NotificationKind,
   Rating,
@@ -106,6 +107,10 @@ interface Store {
    * that is how one browser demonstrates both sides of an exchange.
    */
   setCurrentUser: (id: string) => void
+
+  /** Send a chat message in a borrowing thread. */
+  sendMessage: (borrowingId: string, text: string) => Message
+  markMessagesRead: (borrowingId: string) => void
 
   pushNotification: (n: { kind: NotificationKind; title: string; body?: string; link?: string }) => void
   markNotificationRead: (id: string) => void
@@ -616,6 +621,30 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
             link: `/borrowings/${b.id}`,
           })
         })
+      },
+
+      /* ── Messaging ──────────────────────────────────────── */
+      sendMessage(borrowingId, text) {
+        const msg: Message = {
+          id: uid('msg'),
+          borrowingId,
+          fromUserId: state.currentUserId,
+          text,
+          sentAt: new Date().toISOString(),
+          read: false,
+        }
+        update((s) => ({ ...s, messages: [...(s.messages ?? []), msg] }))
+        return msg
+      },
+      markMessagesRead(borrowingId) {
+        update((s) => ({
+          ...s,
+          messages: (s.messages ?? []).map((m) =>
+            m.borrowingId === borrowingId && m.fromUserId !== s.currentUserId
+              ? { ...m, read: true }
+              : m,
+          ),
+        }))
       },
 
       /* ── Notifications ──────────────────────────────────── */

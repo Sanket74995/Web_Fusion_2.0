@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   AlertTriangle,
@@ -30,6 +31,7 @@ import { SwitchToActorCard } from '@/components/common/AccountSwitcher'
 import { ConditionComparison } from '@/components/common/ConditionComparison'
 import { ChargeBreakdown, SettlementBreakdown } from '@/components/common/ChargeBreakdown'
 import { DataRow } from '@/components/common/StatCard'
+import { ChatPanel } from '@/components/common/ChatPanel'
 import { NotFoundPage } from './NotFound'
 
 export function BorrowingDetailsPage() {
@@ -55,6 +57,7 @@ export function BorrowingDetailsPage() {
   const isBorrower = borrowing.borrowerId === state.currentUserId
   const counterparty = isBorrower ? owner : borrower
   const overdue = borrowing.status === 'return_due'
+  const [chatOpen, setChatOpen] = useState(false)
 
   return (
     <Page>
@@ -91,17 +94,27 @@ export function BorrowingDetailsPage() {
           </span>
         }
         actions={
-          action.urgency !== 'done' && (
-            <Link
-              to={action.to}
-              className={cn(
-                buttonVariants({ variant: action.urgency === 'primary' ? 'primary' : 'outline' }),
-              )}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setChatOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              {action.label}
-              <ArrowRight />
-            </Link>
-          )
+              <MessageSquare className="size-4" />
+              Message {counterparty?.name.split(' ')[0]}
+            </button>
+            {action.urgency !== 'done' && (
+              <Link
+                to={action.to}
+                className={cn(
+                  buttonVariants({ variant: action.urgency === 'primary' ? 'primary' : 'outline' }),
+                )}
+              >
+                {action.label}
+                <ArrowRight />
+              </Link>
+            )}
+          </div>
         }
       />
 
@@ -415,6 +428,13 @@ export function BorrowingDetailsPage() {
           )}
         </div>
       </div>
+
+      <ChatPanel
+        borrowingId={borrowing.id}
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+      />
     </Page>
   )
 }
+

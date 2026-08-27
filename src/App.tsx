@@ -20,6 +20,7 @@ import { MyListingsPage } from '@/pages/MyListings'
 import { NewListingPage } from '@/pages/NewListing'
 import { ProfilePage } from '@/pages/Profile'
 import { NotificationsPage } from '@/pages/Notifications'
+import { MessagesPage } from '@/pages/Messages'
 import { ImpactPage } from '@/pages/Impact'
 import { NotFoundPage } from '@/pages/NotFound'
 
@@ -58,6 +59,7 @@ export function App() {
         <Route path="/listings/new" element={<NewListingPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/messages" element={<MessagesPage />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/impact" element={<ImpactPage />} />
       </Route>

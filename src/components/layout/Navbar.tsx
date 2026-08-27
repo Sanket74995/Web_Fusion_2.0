@@ -6,6 +6,7 @@ import {
   LayoutGrid,
   LogOut,
   Menu,
+  MessageSquare,
   Package,
   RotateCcw,
   Shield,
@@ -21,6 +22,7 @@ import { ConfirmDialog } from '@/components/ui/dialog'
 import { useToast } from '@/components/ui/toast'
 import { Avatar } from '@/components/common/Avatar'
 import { AccountSwitcher } from '@/components/common/AccountSwitcher'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { Logo } from './Logo'
 
 const LINKS = [
@@ -40,6 +42,13 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
 
   const unread = state.notifications.filter((n) => !n.read).length
+  const unreadMessages = (state.messages ?? []).filter(
+    (m) => !m.read && m.fromUserId !== state.currentUserId &&
+      state.borrowings.some(
+        (b) => b.id === m.borrowingId &&
+          (b.borrowerId === state.currentUserId || b.ownerId === state.currentUserId),
+      ),
+  ).length
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -85,6 +94,19 @@ export function Navbar() {
 
           <div className="ml-auto flex items-center gap-1.5">
             <Link
+              to="/messages"
+              className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              aria-label="Messages"
+            >
+              <MessageSquare className="size-[1.125rem]" />
+              {unreadMessages > 0 && (
+                <span className="num absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[0.5625rem] font-bold leading-4 text-primary-foreground">
+                  {unreadMessages > 9 ? '9+' : unreadMessages}
+                </span>
+              )}
+            </Link>
+
+            <Link
               to="/notifications"
               className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={`Notifications${unread ? ` (${unread} unread)` : ''}`}
@@ -96,6 +118,8 @@ export function Navbar() {
                 </span>
               )}
             </Link>
+
+            <ThemeToggle />
 
             <Link
               to="/listings/new"
